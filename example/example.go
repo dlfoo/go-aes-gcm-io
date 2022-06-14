@@ -24,7 +24,7 @@ import (
 	"io"
 	"log"
 
-	gcm "github.com/dlfoo/aesgcmio"
+	gcm "github.com/dlfoo/go-aes-gcm-io"
 )
 
 func main() {

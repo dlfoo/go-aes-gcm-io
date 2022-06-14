@@ -24,7 +24,7 @@ import (
 	"log"
 	"testing"
 
-	gcm "github.com/dlfoo/aesgcmio"
+	gcm "github.com/dlfoo/go-aes-gcm-io"
 )
 
 var (
