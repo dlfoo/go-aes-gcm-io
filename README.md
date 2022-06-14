@@ -1,4 +1,4 @@
-# AES GCM IO Read/Writer
+# Golang AES GCM IO Read/Writer
 
 This library implements both the io.WriteCloser and io.Reader interface when you need
 to encrypt/decrypt an unknown payload size with AES GCM in Golang.
