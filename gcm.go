@@ -24,14 +24,14 @@ import (
 	"io"
 )
 
-type gcmEncryptionReader struct {
+type Reader struct {
 	c         cipher.AEAD
 	buf       *bytes.Buffer
 	src       io.Reader
 	chunkSize int
 }
 
-func (g *gcmEncryptionReader) Read(p []byte) (int, error) {
+func (g *Reader) Read(p []byte) (int, error) {
 	todo := readerChunkSize(len(p), g.chunkSize)
 	for {
 		if todo < g.chunkSize {
@@ -84,7 +84,7 @@ func (g *gcmEncryptionReader) Read(p []byte) (int, error) {
 
 // NewReader returns a reader to read plaintext bytes from the encrypted
 // source reader.
-func NewReader(r io.Reader, key []byte) (*gcmEncryptionReader, error) {
+func NewReader(r io.Reader, key []byte) (*Reader, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ func NewReader(r io.Reader, key []byte) (*gcmEncryptionReader, error) {
 		return nil, err
 	}
 
-	reader := &gcmEncryptionReader{
+	reader := &Reader{
 		c:   aesgcm,
 		buf: new(bytes.Buffer),
 		src: r,
@@ -111,7 +111,7 @@ func NewReader(r io.Reader, key []byte) (*gcmEncryptionReader, error) {
 
 }
 
-type gcmEncryptionWriter struct {
+type Writer struct {
 	c           cipher.AEAD
 	dst         io.Writer
 	buf         *bytes.Buffer
@@ -119,7 +119,7 @@ type gcmEncryptionWriter struct {
 	payloadSize int
 }
 
-func (g *gcmEncryptionWriter) Write(p []byte) (int, error) {
+func (g *Writer) Write(p []byte) (int, error) {
 	// todo represents the amount of bytes left to encrypt
 	// and write to the destination writer. Note: There may
 	// be bytes left over due to the chunkSize below.
@@ -170,7 +170,7 @@ func (g *gcmEncryptionWriter) Write(p []byte) (int, error) {
 	return n, nil
 }
 
-func (g *gcmEncryptionWriter) Close() error {
+func (g *Writer) Close() error {
 	// Return quickly if there's no bytes remaining on the buffer, nothing
 	// more needs to be done.
 	if g.buf.Len() <= 0 {
@@ -202,7 +202,7 @@ func (g *gcmEncryptionWriter) Close() error {
 
 // NewWriter returns a writer to write plaintext payload to, if
 // chunkSize is set to 0 then defaultChunkSize will be used.
-func NewWriter(w io.Writer, key []byte, chunkSize int) (*gcmEncryptionWriter, error) {
+func NewWriter(w io.Writer, key []byte, chunkSize int) (*Writer, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -226,7 +226,7 @@ func NewWriter(w io.Writer, key []byte, chunkSize int) (*gcmEncryptionWriter, er
 		panic(err.Error())
 	}
 
-	return &gcmEncryptionWriter{
+	return &Writer{
 		c:           aesgcm,
 		dst:         w,
 		buf:         new(bytes.Buffer),
