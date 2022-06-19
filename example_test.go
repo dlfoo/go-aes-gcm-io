@@ -28,7 +28,7 @@ import (
 // This example shows writing cleartext to an io.Writer.
 // Note: You can't compare the ciphertext bytes output to the Reader.Read()
 // example below, due to the random nonce.
-func ExampleWriter_Write() {
+func ExampleNewWriter() {
 	// Declare the key we will use to encrypt the cleartext.
 	key, err := hex.DecodeString("6368616e676520746869732070617373776f726420746f206120736563726574")
 	if err != nil {
@@ -68,7 +68,7 @@ func ExampleWriter_Write() {
 }
 
 // This example shows reading ciphertext from an io.Reader.
-func ExampleReader_Read() {
+func ExampleNewReader() {
 	// Declare the key we will use to decrypt the ciphertext.
 	key, err := hex.DecodeString("6368616e676520746869732070617373776f726420746f206120736563726574")
 	if err != nil {
